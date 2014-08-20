@@ -37,8 +37,16 @@ public class GetOwlDataExample {
             for (Iterator<OWLAnnotation> itAnnotations = annotations.iterator(); itAnnotations.hasNext(); ) {
                 OWLAnnotation oWLAnnotation = itAnnotations.next();
                 //System.out.println(oWLAnnotation);
-                System.out.println("Annotation property: " + oWLAnnotation.getProperty().toStringID());
+                System.out.println("Annotation property: " + oWLAnnotation.toString());
                 System.out.println("Annotation value: " + oWLAnnotation.getValue());
+
+                System.out.println("Clase: " + oWLAnnotation.getProperty().getClass().toString());
+                if (oWLAnnotation.getValue() instanceof OWLLiteral) {
+                    OWLLiteral val = (OWLLiteral) oWLAnnotation.getValue();
+                    System.out.println("Literal: " + val.getLiteral());
+                }
+                System.out.println("Annotation1: " + oWLAnnotation.getProperty().toStringID());
+                System.out.println("Annotation2: " + oWLAnnotation.getProperty().toString());
             }
 
         }
