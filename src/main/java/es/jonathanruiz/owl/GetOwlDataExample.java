@@ -31,26 +31,21 @@ public class GetOwlDataExample {
 
         for (Iterator<OWLClass> it = currentOntologyClasses.iterator(); it.hasNext(); ) {
             OWLClass owlClass = it.next();
-            //System.out.println(owlClass);
+            System.out.println(owlClass.toStringID());
+            System.out.println("===============================");
             Set<OWLAnnotation> annotations = owlClass.getAnnotations(hpOntology);
 
             for (Iterator<OWLAnnotation> itAnnotations = annotations.iterator(); itAnnotations.hasNext(); ) {
                 OWLAnnotation oWLAnnotation = itAnnotations.next();
-                //System.out.println(oWLAnnotation);
-                System.out.println("Annotation property: " + oWLAnnotation.toString());
-                System.out.println("Annotation value: " + oWLAnnotation.getValue());
-
-                System.out.println("Clase: " + oWLAnnotation.getProperty().getClass().toString());
-                if (oWLAnnotation.getValue() instanceof OWLLiteral) {
+                //System.out.println("\tAnnotation: " + oWLAnnotation.toString());
+                //System.out.println("\tAnnotation value: " + oWLAnnotation.getValue());
+                String iriFragment = oWLAnnotation.getProperty().getIRI().getFragment();
+                if (oWLAnnotation.getValue() instanceof OWLLiteral && (iriFragment.equals("id") || iriFragment.equals("IAO_0000115"))) {
                     OWLLiteral val = (OWLLiteral) oWLAnnotation.getValue();
-                    System.out.println("Literal: " + val.getLiteral());
+                    System.out.println("\t" + iriFragment + ":" + val.getLiteral());
                 }
-                System.out.println("Annotation1: " + oWLAnnotation.getProperty().toStringID());
-                System.out.println("Annotation2: " + oWLAnnotation.getProperty().toString());
             }
-
         }
-
         manager.removeOntology(hpOntology);
     }
 
@@ -58,12 +53,12 @@ public class GetOwlDataExample {
 
 
     public static void main (String [] args) {
-        System.out.println("hola");
+        System.out.println("Getting data...");
         GetOwlDataExample ex = new GetOwlDataExample();
         try {
             ex.showClasses();
         } catch (OWLOntologyCreationException e) {
-            System.out.println("ha sido un error");
+            System.out.println("[Error] Exception throw:");
             e.printStackTrace();
         }
     }
