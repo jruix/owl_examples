@@ -25,13 +25,13 @@ public class GetOwlDataExample {
         manager = OWLManager.createOWLOntologyManager();
         OWLDataFactory factory = manager.getOWLDataFactory();
 
-        File file = new File("/tmp/hp.owl");
+        File file = new File("src/main/resources/hp.owl");
         OWLOntology hpOntology = manager.loadOntologyFromOntologyDocument(file);
         System.out.println("Loaded ontology: " + hpOntology);
         Set<OWLClass> currentOntologyClasses = hpOntology.getClassesInSignature();
         System.out.println("Classes in Ontology: " + currentOntologyClasses.size());
 
-        PrintWriter writer = new PrintWriter("/tmp/hp.csv", "UTF-8");
+        PrintWriter writer = new PrintWriter("src/main/resources/hp.csv", "UTF-8");
 
         for (Iterator<OWLClass> it = currentOntologyClasses.iterator(); it.hasNext(); ) {
             OWLClass owlClass = it.next();

@@ -1,14 +1,11 @@
 package es.jonathanruiz.owl;
 
+import es.jonathanruiz.owl.parser.UmlsParser;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 
 import java.io.File;
-
-/**
- * Created by jruiz on 19/08/14.
- */
 
 public class LoadOwlFileExample {
     public OWLOntologyManager manager;
