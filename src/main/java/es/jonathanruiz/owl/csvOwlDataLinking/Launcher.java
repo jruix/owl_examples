@@ -24,52 +24,69 @@ import java.util.regex.Pattern;
 
 public class Launcher {
 
-//    private String getLabel(OWLClass owlClass)
-//    {
-//        Set<OWLAnnotation> owlAnnotations = owlClass.getAnnotations(this.ontology);
-//
-//        for (Iterator<OWLAnnotation> it = owlAnnotations.iterator(); it.hasNext(); ) {
-//            OWLAnnotation owlAnnotation = it.next();
-//            if (owlAnnotation.getProperty().getIRI().getFragment().equals("label")){
-//                OWLLiteral val = (OWLLiteral) owlAnnotation.getValue();
-//                return val.getLiteral();
-//            }
-//        }
-//        return "";
-//    }
-//
-//    private String getAttribute(String attribute, OWLClass owlClass)
-//    {
-//        Set<OWLAnnotation> owlAnnotations = owlClass.getAnnotations(this.ontology);
-//
-//        for (Iterator<OWLAnnotation> it = owlAnnotations.iterator(); it.hasNext(); ) {
-//            OWLAnnotation owlAnnotation = it.next();
-//
-//            if (owlAnnotation.getProperty().getIRI().getFragment().equals(attribute) && owlAnnotation.getValue() instanceof OWLLiteral){
-//                OWLLiteral val = (OWLLiteral) owlAnnotation.getValue();
-//                return val.getLiteral();
-//            }
-//        }
-//        return "";
-//    }
-//
-//    private Set<String> getIdsFromString(String attribute)
-//    {
-//        Set<String> idsSet = new HashSet<String>();
-//        Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(attribute);
-//        while(m.find()) {
-//            idsSet.add(m.group().replace("(","").replace(")",""));
-//        }
-//
-//        return idsSet;
-//    }
 
     public void tranverseOntoloty(OWLReasoner reasoner, OWLClass cls, OWLOntology ontology, JSONArray jsonArray, Set<String> matches) {
 
         String classLabel = OwlDataExtrators.getLabel(cls, ontology);
         String classDescription = OwlDataExtrators.getAttribute("IAO_0000115",cls,ontology);
+        String classExactSynonym = OwlDataExtrators.getAttribute("hasExactSynonym",cls,ontology);
+        String classDbXref = OwlDataExtrators.getAttribute("hasDbXref",cls,ontology);
+
+
         if (! classDescription.isEmpty()) {
-            System.out.println("Not Empty!");
+            Iterator<JSONObject> jsonArrayIterator = jsonArray.iterator();
+            while (jsonArrayIterator.hasNext()) {
+                JSONObject jsonObject = jsonArrayIterator.next();
+                String jsonConcept = (String) jsonObject.get("concept");
+
+                if (classDescription.equals(jsonConcept)) {
+
+                    matches.add("{ 'type': 'rule 1' , 'label':'" + classLabel + "'," + "'Synonyms':'" + classExactSynonym + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
+                    System.out.println("{ 'type': 'rule 1' , 'label':'" + classLabel + "'," + "'Synonyms':'" + classExactSynonym + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
+                }
+            }
+        }
+
+        if (! classExactSynonym.isEmpty()) {
+
+            Set<String> exactSynonymsSet = new HashSet<String>(Arrays.asList(classExactSynonym.split("&&")));
+            Iterator<JSONObject> jsonArrayIterator = jsonArray.iterator();
+            while (jsonArrayIterator.hasNext()) {
+                JSONObject jsonObject = jsonArrayIterator.next();
+                String jsonConcept = (String) jsonObject.get("concept");
+
+                if (exactSynonymsSet.contains(jsonConcept)) {
+
+                    matches.add("{ 'type': 'rule 2' , 'label':'" + classLabel + "'," + "'Synonyms':'" + classExactSynonym  + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
+                    System.out.println("{ 'type': 'rule 1' , 'label':'" + classLabel + "'," + "'Synonyms':'" + classExactSynonym  + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
+                }
+
+            }
+
+        }
+
+        if (! classDbXref.isEmpty()) {
+
+
+            Set<String> idsInJSonSet = new HashSet<String>();
+
+            Set<String> dbXrefSet = new HashSet<String>(Arrays.asList(classDbXref.split("&&")));
+            Iterator<String> dbXrefIterator = dbXrefSet.iterator();
+            while (dbXrefIterator.hasNext()) {
+                String dbXref = dbXrefIterator.next();
+
+                if (dbXref.contains("UMLS:")) {
+                    matches.add("{ 'type': 'rule 3' , 'label':'" + classLabel + "'," + "'Synonyms':'" + classExactSynonym  + "'," + "'description':'" + classDescription + "', 'UMLS':" + dbXref);
+                    System.out.println("{ 'type': 'rule 3' , 'label':'" + classLabel + "'," + "'Synonyms':'" + classExactSynonym  + "'," + "'description':'" + classDescription + "', 'UMLS':" + dbXref);
+                }
+                idsInJSonSet.clear();
+
+            }
+
+        }
+
+        if (! classDescription.isEmpty()) {
+
             Set<String> idsInDescriptionSet = OwlDataExtrators.getIdsFromString(classDescription);
             Set<String> idsInJSonSet = new HashSet<String>();
 
@@ -86,10 +103,10 @@ public class Launcher {
                         idsInJSonSet.add(annotationIdentifier);
                     }
 
-                    if (idsInJSonSet.containsAll(idsInDescriptionSet)) {
+                    if (idsInDescriptionSet.containsAll(idsInJSonSet)) {
 
-                        matches.add("{ 'label':'" + classLabel + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
-                        System.out.println("Match!" + "{ 'label':'" + classLabel + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
+                        matches.add("{ 'type': 'rule 4' , 'label':'" + classLabel + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
+                        System.out.println("Rule 4 Match!" + "{ 'label':'" + classLabel + "'," + "'description':'" + classDescription + "'," + jsonObject.toJSONString());
                     }
                     idsInJSonSet.clear();
 
@@ -112,43 +129,10 @@ public class Launcher {
 
     }
 
-//    public void loadOWL(String filepath)
-//            throws OWLOntologyCreationException {
-//        this.manager = OWLManager.createOWLOntologyManager();
-//        File file = new File(filepath);
-//        if (!file.exists()) {
-//            // If the file does not exist
-//            System.out.println("no such file!");
-//            return;
-//        }
-//        OWLDataFactory df = this.manager.getOWLDataFactory();
-//
-//        this.ontology = this.manager.loadOntologyFromOntologyDocument(file);
-//
-//        System.out.println("Loaded");
-//		/*
-//		 * Test traversal class hierarchy
-//		One could also use a complete reasoner like HermiT
-//		 * */
-//        OWLReasonerFactory reasonFactory = new StructuralReasonerFactory();
-//
-//        OWLReasoner reasoner = reasonFactory.createReasoner(this.ontology);
-//
-//        OWLClass top_clas = reasoner.getTopClassNode().getRepresentativeElement();
-//
-//
-//        tranverseOntoloty(reasoner, top_clas, df);
-//
-//    }
-
     public static void main (String [] args) {
         System.out.println("Getting data...");
         Launcher ex = new Launcher();
         try {
-
-            // Read OWL File
-//            OwlFileLoader owlFileReader = new OwlFileLoader();
-//            owlFileReader.load("src/main/resources/hp.owl");
 
             OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
             OWLDataFactory factory = manager.getOWLDataFactory();
