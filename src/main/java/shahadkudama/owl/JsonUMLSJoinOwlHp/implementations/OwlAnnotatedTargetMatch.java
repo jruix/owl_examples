@@ -15,7 +15,6 @@ public class OwlAnnotatedTargetMatch implements Comparator {
         String classLabel = OwlDataExtrators.getLabel(owlClass, owlOntology);
         String classAnnotatedTarget = OwlDataExtrators.getAttribute("annotatedTarget", owlClass, owlOntology);
 
-        System.out.println(jsonConcept + "==" + classLabel);
         return jsonConcept.equals(classLabel);
     }
 }

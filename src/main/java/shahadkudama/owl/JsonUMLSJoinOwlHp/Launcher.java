@@ -1,7 +1,7 @@
 package shahadkudama.owl.JsonUMLSJoinOwlHp;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
-import shahadkudama.owl.JsonUMLSJoinOwlHp.implementations.OwlLabelMatch;
+import shahadkudama.owl.JsonUMLSJoinOwlHp.implementations.*;
 import shahadkudama.owl.JsonUMLSJoinOwlHp.interfaces.Comparator;
 import shahadkudama.owl.tools.OwlDataExtrators;
 import org.json.simple.JSONArray;
@@ -122,6 +122,22 @@ public class Launcher {
         // Get matches
         Set<String> matches = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlLabelMatch());
         Launcher.saveMatches(matches, "src/main/resources/matches.txt");
+
+        // Get matches
+        Set<String> matches1 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlDefinitionMatch());
+        Launcher.saveMatches(matches1, "src/main/resources/matches1.txt");
+
+        // Get matches
+        Set<String> matches2 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlDefinitionAnnotationMatch());
+        Launcher.saveMatches(matches2, "src/main/resources/matches2.txt");
+
+        // Get matches
+        Set<String> matches3 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlClassAxiomsMatch());
+        Launcher.saveMatches(matches3, "src/main/resources/matches3.txt");
+
+        // Get matches
+        Set<String> matches4 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlAnnotatedTargetMatch());
+        Launcher.saveMatches(matches4, "src/main/resources/matches4.txt");
 
 
     }
