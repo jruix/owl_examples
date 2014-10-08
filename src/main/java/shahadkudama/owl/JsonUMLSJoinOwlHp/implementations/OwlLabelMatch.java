@@ -15,6 +15,6 @@ public class OwlLabelMatch implements Comparator {
         String jsonConcept = (String) jsonObject.get("concept");
         String classLabel = OwlDataExtrators.getLabel(owlClass, owlOntology);
 
-        return jsonConcept.equals(classLabel);
+        return jsonConcept.toLowerCase().equals(classLabel.toLowerCase());
     }
 }

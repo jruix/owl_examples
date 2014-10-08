@@ -1,6 +1,5 @@
 package shahadkudama.owl.JsonUMLSJoinOwlHp;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import shahadkudama.owl.JsonUMLSJoinOwlHp.implementations.*;
 import shahadkudama.owl.JsonUMLSJoinOwlHp.interfaces.Comparator;
 import shahadkudama.owl.tools.OwlDataExtrators;
@@ -18,7 +17,6 @@ import java.io.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 
 public class Launcher {
@@ -65,8 +63,10 @@ public class Launcher {
     {
         HashSet<String> result = new HashSet<String>();
 
+        int counter = 0;
         Iterator<JSONObject> jsonArrayIterator = jsonArray.iterator();
         while(jsonArrayIterator.hasNext()) {
+            System.out.println("Iteration: " + counter++ + "/" + jsonArray.size() + " of " + comparator.getClass().getSimpleName());
             JSONObject jsonObject = jsonArrayIterator.next();
             String jsonConcept = (String) jsonObject.get("concept");
             String jsonAnnotationsIds = "";
@@ -98,6 +98,7 @@ public class Launcher {
         try {
             PrintWriter writer = new PrintWriter(path, "UTF-8");
             Iterator<String> matchesIterator = matches.iterator();
+            writer.println("Total:" + matches.size() );
             while (matchesIterator.hasNext()) {
                 String matchString = matchesIterator.next();
                 writer.println(matchString );
@@ -120,22 +121,27 @@ public class Launcher {
         loadJsonFile("src/main/resources/umls_results_1.json");
 
         // Get matches
+        System.out.println("Loking for matches using rule");
         Set<String> matches = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlLabelMatch());
         Launcher.saveMatches(matches, "src/main/resources/matches.txt");
 
         // Get matches
+        System.out.println("Loking for matches using rule1");
         Set<String> matches1 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlDefinitionMatch());
         Launcher.saveMatches(matches1, "src/main/resources/matches1.txt");
 
         // Get matches
+        System.out.println("Loking for matches using rule2");
         Set<String> matches2 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlDefinitionAnnotationMatch());
         Launcher.saveMatches(matches2, "src/main/resources/matches2.txt");
 
         // Get matches
+        System.out.println("Loking for matches using rule3");
         Set<String> matches3 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlClassAxiomsMatch());
         Launcher.saveMatches(matches3, "src/main/resources/matches3.txt");
 
         // Get matches
+        System.out.println("Loking for matches using rule4");
         Set<String> matches4 = Launcher.getMatches(Launcher.umlsOntologyJsonArray, Launcher.owlOntology, new OwlAnnotatedTargetMatch());
         Launcher.saveMatches(matches4, "src/main/resources/matches4.txt");
 
